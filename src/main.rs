@@ -1,4 +1,4 @@
-use std::{collections::HashMap, env::args, fs, process};
+use std::{collections::HashMap, env::args, fs, io::Write, process};
 
 use chunk::{Chunk, IhdrChunk};
 use png::SignatureHeader;
@@ -16,8 +16,10 @@ fn main() {
         eprintln!("Usage: ./filter <png file>");
         process::exit(1);
     }
+
+    // declaring filenames
     let filename = &args[1];
-    let _new_filename = format!("{filename}_copy.png");
+    let new_filename = format!("{filename}_copy.png");
 
     // Open file
     let mut fileptr = match fs::File::open(filename) {
@@ -29,7 +31,7 @@ fn main() {
     };
 
     // Read Signature Header and ensure if valid file
-    let _signature_header: SignatureHeader = match SignatureHeader::new(&mut fileptr) {
+    let signature_header: SignatureHeader = match SignatureHeader::new(&mut fileptr) {
         Err(err) => {
             eprintln!("{err} Invalid PNG File.");
             process::exit(1);
@@ -69,6 +71,44 @@ fn main() {
         if curr_chunk.chunk_type_as_str() == "IEND" {
             println!("IEND Reached!");
             break;
+        }
+    }
+
+    println!("\nChecking if the Chunks are the same in the Vec:");
+    for chunk in &chunks {
+        if chunk.chunk_type_as_str() == "IHDR" {
+            let ihdr: IhdrChunk = IhdrChunk::new(&chunk);
+            println!("{:?}", ihdr)
+        } else {
+            println!("{}", chunk.chunk_type_as_str());
+        }
+    }
+
+    // At this point, should we try and write the same chunks
+    // to an output file and see if the output is correct?
+    let mut out_fileptr = match fs::File::create(&new_filename) {
+        Err(err) => {
+            eprintln!("Error opening output file: {err}.");
+            process::exit(1);
+        }
+        Ok(file) => file,
+    };
+    // write signature header
+    match out_fileptr.write(&signature_header.values()) {
+        Err(err) => {
+            eprintln!("Error writing to file {}: {}", &new_filename, err);
+            process::exit(1);
+        }
+        Ok(size) => println!("{} bytes correctly written to {}", size, &new_filename),
+    }
+    // write chunks one by one
+    for chunk in chunks {
+        match chunk.write_to_file(&mut out_fileptr) {
+            Err(err) => {
+                eprintln!("Error writing data to {}: {}.", &new_filename, err);
+                process::exit(1);
+            }
+            Ok(size) => println!("Written {} bytes to {}.", size, &new_filename),
         }
     }
 }
