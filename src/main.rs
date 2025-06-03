@@ -53,8 +53,10 @@ fn main() {
             Ok(chunk) => chunk,
         };
 
-        if curr_chunk.chunk_type_as_str() == "IHDR" {
-            println!("IHDR Found!")
+        println!("Chunk Type: {}", curr_chunk.chunk_type_as_str());
+        if curr_chunk.chunk_type_as_str() == "IEND" {
+            println!("IEND Reached!");
+            break;
         }
     }
 }
