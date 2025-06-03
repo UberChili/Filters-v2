@@ -61,4 +61,43 @@ impl Chunk {
         // self.chunk_type.into()
         str::from_utf8(&self.chunk_type).unwrap()
     }
+
+    //return the chunk's data
+    pub fn data(&self) -> &Vec<u8> {
+        &self.data
+    }
+}
+
+#[derive(Debug)]
+#[allow(dead_code)]
+pub struct IhdrChunk {
+    width: u32,
+    height: u32,
+    bit_depth: u8,
+    colour_type: u8,
+    compression_method: u8,
+    filter_method: u8,
+    interlace_method: u8,
+}
+
+impl IhdrChunk {
+    pub fn new(chunk: &Chunk) -> Self {
+        let width: u32 = u32::from_be_bytes(chunk.data()[0..4].try_into().unwrap());
+        let height: u32 = u32::from_be_bytes(chunk.data()[4..8].try_into().unwrap());
+        let bit_depth: u8 = chunk.data()[8];
+        let colour_type: u8 = chunk.data()[9];
+        let compression_method: u8 = chunk.data()[10];
+        let filter_method: u8 = chunk.data()[11];
+        let interlace_method: u8 = chunk.data()[12];
+
+        IhdrChunk {
+            width,
+            height,
+            bit_depth,
+            colour_type,
+            compression_method,
+            filter_method,
+            interlace_method,
+        }
+    }
 }

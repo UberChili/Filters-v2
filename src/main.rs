@@ -1,6 +1,6 @@
 use std::{collections::HashMap, env::args, fs, process};
 
-use chunk::Chunk;
+use chunk::{Chunk, IhdrChunk};
 use png::SignatureHeader;
 
 mod chunk;
@@ -59,6 +59,11 @@ fn main() {
 
         // print some info from IHDR
         // Just realizing maybe I need to think of a different approach when using the chunks
+        if curr_chunk.chunk_type_as_str() == "IHDR" {
+            println!("IHDR Chunk found!");
+            let ihdr: IhdrChunk = IhdrChunk::new(&curr_chunk);
+            println!("{:?}", ihdr);
+        }
 
         println!("Chunk Type: {}", curr_chunk.chunk_type_as_str());
         if curr_chunk.chunk_type_as_str() == "IEND" {
