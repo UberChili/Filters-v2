@@ -42,7 +42,7 @@ fn main() {
 
     // Reading chunks until we find IEND
     // Be sure to print info from IHDR
-    // let mut chunks: Vec<Chunk> = Vec::new();
+    let mut chunks: Vec<Chunk> = Vec::new();
     loop {
         // Huh, I'm not sure about this:
         let curr_chunk: Chunk = match Chunk::new(&mut fileptr) {
@@ -50,8 +50,15 @@ fn main() {
                 eprintln!("Error reading Chunk: {}", err);
                 process::exit(1);
             }
-            Ok(chunk) => chunk,
+            Ok(chunk) => {
+                // Pushing the chunk into the chunks Vec by cloning
+                chunks.push(chunk.clone());
+                chunk
+            }
         };
+
+        // print some info from IHDR
+        // Just realizing maybe I need to think of a different approach when using the chunks
 
         println!("Chunk Type: {}", curr_chunk.chunk_type_as_str());
         if curr_chunk.chunk_type_as_str() == "IEND" {

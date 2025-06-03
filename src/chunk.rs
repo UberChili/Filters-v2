@@ -2,6 +2,7 @@ use core::str;
 use std::{fs::File, io::Read};
 
 #[allow(dead_code)]
+#[derive(Clone)]
 pub struct Chunk {
     length: u32,
     chunk_type: [u8; 4],
