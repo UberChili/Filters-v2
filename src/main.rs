@@ -1,4 +1,4 @@
-use std::{collections::HashMap, env::args, fs, io::Write, process};
+use std::{env::args, fs, io::Write, process};
 
 use chunk::{Chunk, IhdrChunk};
 use png::SignatureHeader;
@@ -7,9 +7,6 @@ mod chunk;
 mod png;
 
 fn main() {
-    let mut department: HashMap<String, u32> = HashMap::new();
-    department.insert(String::from("Blue"), 32);
-
     // Ensure correct usage
     let args: Vec<String> = args().collect();
     if args.len() != 2 {
@@ -17,11 +14,11 @@ fn main() {
         process::exit(1);
     }
 
-    // declaring filenames
+    // Declaring filenames
     let filename = &args[1];
-    let new_filename = format!("{filename}_copy.png");
+    let new_filename: String = String::from("output.png");
 
-    // Open file
+    // Opening file
     let mut fileptr = match fs::File::open(filename) {
         Err(err) => {
             eprintln!("Error opening file: {err}.");

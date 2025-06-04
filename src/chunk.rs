@@ -14,6 +14,7 @@ pub struct Chunk {
 }
 
 impl Chunk {
+    // Constructor for new chunk
     pub fn new(file: &mut File) -> Result<Self, Box<dyn std::error::Error>> {
         let mut length_bytes = [0u8; 4];
         match file.read_exact(&mut length_bytes) {
@@ -60,13 +61,10 @@ impl Chunk {
         // Write the length (as big-endian)
         let length_bytes = self.length.to_be_bytes();
         total_written += file.write(&length_bytes)?;
-
         // Write the chunk type
         total_written += file.write(&self.chunk_type())?;
-
         // Write the data
         total_written += file.write(&self.data())?;
-
         // Write the CRC
         total_written += file.write(&self.crc)?;
 
