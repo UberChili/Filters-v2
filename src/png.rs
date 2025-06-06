@@ -2,7 +2,6 @@ use std::{fs::File, io::Read};
 
 const SIGNATURE_HEADER: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
 
-#[allow(dead_code)]
 pub struct SignatureHeader {
     values: [u8; 8],
 }
@@ -28,7 +27,6 @@ impl SignatureHeader {
     }
 
     // Returns the bytes from the signature header
-    #[allow(dead_code)]
     pub fn values(&self) -> [u8; 8] {
         self.values
     }

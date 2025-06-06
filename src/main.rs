@@ -21,7 +21,7 @@ fn main() {
     // Opening file
     let mut fileptr = match fs::File::open(filename) {
         Err(err) => {
-            eprintln!("Error opening file: {err}.");
+            eprintln!("Error opening file: {err}. Incorrect filename?");
             process::exit(1);
         }
         Ok(file) => file,
