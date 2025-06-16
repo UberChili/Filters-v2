@@ -9,14 +9,11 @@ pub struct SignatureHeader {
 impl SignatureHeader {
     // Creates a Signature Header
     // If an error occurs, we can say that we have an invalid PNG File
-    pub fn new(file: &mut File) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn build(file: &mut File) -> Result<Self, Box<dyn std::error::Error>> {
         let mut filebuff = [0u8; 8];
 
         // read into buffer
-        match file.read_exact(&mut filebuff) {
-            Err(err) => return Err(format!("Error reading Signature Header: {err}").into()),
-            _ => (),
-        };
+        file.read_exact(&mut filebuff)?;
 
         // Compare values
         if filebuff.to_vec().iter().eq(&SIGNATURE_HEADER.to_vec()) {

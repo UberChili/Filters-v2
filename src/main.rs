@@ -28,7 +28,7 @@ fn main() {
     };
 
     // Read Signature Header and ensure if valid file
-    let signature_header: SignatureHeader = match SignatureHeader::new(&mut fileptr) {
+    let signature_header: SignatureHeader = match SignatureHeader::build(&mut fileptr) {
         Err(err) => {
             eprintln!("{err} Invalid PNG File.");
             process::exit(1);
