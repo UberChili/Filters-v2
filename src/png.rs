@@ -19,7 +19,7 @@ impl SignatureHeader {
         if filebuff.to_vec().iter().eq(&SIGNATURE_HEADER.to_vec()) {
             Ok(SignatureHeader { values: filebuff })
         } else {
-            Err("Mismatch in Signature Header".into())
+            Err("Mismatch in Signature Header.".into())
         }
     }
 

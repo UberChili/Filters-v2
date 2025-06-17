@@ -4,6 +4,7 @@ use chunk::{Chunk, IhdrChunk};
 use png::SignatureHeader;
 
 mod chunk;
+mod lib;
 mod png;
 
 fn main() {
@@ -99,6 +100,9 @@ fn main() {
         Ok(size) => println!("{} bytes correctly written to {}", size, &new_filename),
     }
     // write chunks one by one
+    // We could refactor this function out of main
+    // TODO think of a new .rs file to move this function and maybe others
+    // run function????
     for chunk in chunks {
         match chunk.write_to_file(&mut out_fileptr) {
             Err(err) => {
