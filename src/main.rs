@@ -1,26 +1,21 @@
-use std::{env::args, fs, io::Write, process};
+use std::{env, fs, io::Write, process};
 
 use chunk::{Chunk, IhdrChunk};
+use filter::Config;
 use png::SignatureHeader;
 
 mod chunk;
-mod lib;
 mod png;
 
 fn main() {
-    // Ensure correct usage
-    let args: Vec<String> = args().collect();
-    if args.len() != 2 {
-        eprintln!("Usage: ./filter <png file>");
+    // Ensure correct usage and initializing config
+    let config = Config::build(env::args()).unwrap_or_else(|err| {
+        eprintln!("Error parsing arguments: {}", err);
         process::exit(1);
-    }
-
-    // Declaring filenames
-    let filename = &args[1];
-    let new_filename: String = String::from("output.png");
+    });
 
     // Opening file
-    let mut fileptr = match fs::File::open(filename) {
+    let mut fileptr = match fs::File::open(&config.file_path()) {
         Err(err) => {
             eprintln!("Error opening file: {err}. Incorrect filename?");
             process::exit(1);
@@ -29,6 +24,7 @@ fn main() {
     };
 
     // Read Signature Header and ensure if valid file
+    // TODO Start moving this to run() function in lib.rs
     let signature_header: SignatureHeader = match SignatureHeader::build(&mut fileptr) {
         Err(err) => {
             eprintln!("{err} Invalid PNG File.");
@@ -102,7 +98,7 @@ fn main() {
     // write chunks one by one
     // We could refactor this function out of main
     // TODO think of a new .rs file to move this function and maybe others
-    // run function????
+    // run function???? See above when reading Signature Header!
     for chunk in chunks {
         match chunk.write_to_file(&mut out_fileptr) {
             Err(err) => {
